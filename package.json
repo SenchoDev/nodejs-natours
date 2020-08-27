@@ -1,0 +1,22 @@
+{
+  "name": "natours",
+  "version": "1.0.0",
+  "description": "Node js, express and MongoDB app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SenchoDev/nodejs-natours.git"
+  },
+  "author": "Sencho Dev",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/SenchoDev/nodejs-natours/issues"
+  },
+  "homepage": "https://github.com/SenchoDev/nodejs-natours#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
