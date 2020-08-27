@@ -6,15 +6,8 @@ const userRouter = require("./routes/userRoutes");
 
 const app = express();
 
-// 1) MIDDLEWARES
-
 app.use(morgan("dev"));
 app.use(express.json());
-
-app.use((req, res, next) => {
-  console.log("Hello from the middleware");
-  next();
-});
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
@@ -24,9 +17,5 @@ app.use((req, res, next) => {
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
 
-const port = 3000;
+module.exports = app;
 
-// START THE SERVER
-app.listen(port, () => {
-  console.log(`App running on port ${port}...`);
-});
