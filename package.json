@@ -4,7 +4,8 @@
   "description": "Node js, express and MongoDB app",
   "main": "app.js",
   "scripts": {
-    "start": "nodemon server.js"
+    "start:dev": "nodemon server.js",
+    "start:prod": "NODE_ENV=production nodemon server.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +18,9 @@
   },
   "homepage": "https://github.com/SenchoDev/nodejs-natours#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "morgan": "^1.10.0"
-  }
+  },
+  "devDependencies": {}
 }
