@@ -1,4 +1,5 @@
 const Tour = require("./../models/tourModels");
+const APIFeatures = require("./../utils/apiFeatures")
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit =  '5',
@@ -7,108 +8,10 @@ exports.aliasTopTours = (req, res, next) => {
   next();
 }
 
-class APIFeatures {
-  constructor(query, queryStr){
-    this.query = query,
-    this.queryStr = queryStr;
-  }
-
-  filter(){
-    const queryObj = { ...this.queryStr };
-    const excludedFields = ["page", "sort", "limit", "fields"];
-    excludedFields.forEach((el) => delete queryObj[el]);
-
-    // 1B) Advanced filtering
-    let queryStr = JSON.stringify(queryObj);
-    queryStr = queryStr.replace(/(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-    
-    this.query = this.query.find(JSON.parse(queryStr))
-    // let query = Tour.find(JSON.parse(queryStr));
-
-    return this;
-  }
-
-  sort(){
-    if (this.queryStr.sort) {
-      const sortBy =  this.query.sort.split(",").join(" ");
-      this.query = this.query.sort(sortBy);
-    } else {
-      this.query = this.query.sort("-createdAt");
-    }
-
-    return this;
-  }
-  limitFields(){
-    if(this.queryStr.fields){
-      const fields = this.query.fields.split(',').join(' ')
-      this.query = this.query.select(fields);
-    } else {
-      this.query = this.query.select('-__v');
-    }
-    
-    return this;
-  }
-
-  paginate(){
-    const page = this.queryStr.page * 1 || 1;
-    const limit = this.queryStr.limit * 1 || 100;
-
-    const skip = (page - 1) * limit;
-
-
-    this.query = this.query.skip(skip).limit(limit)
-
-    return this
-  }
-}
 
 exports.getAllTours = async (req, res) => {
   try {
-    //BUILD QUERY
-    // 1A) Filtering
-    // const queryObj = { ...req.query };
-    // const excludedFields = ["page", "sort", "limit", "fields"];
-    // excludedFields.forEach((el) => delete queryObj[el]);
 
-    // // 1B) Advanced filtering
-    // let queryStr = JSON.stringify(queryObj);
-    // queryStr = queryStr.replace(/(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
-
-    // let query = Tour.find(JSON.parse(queryStr));
-
-    // 2) Sorting
-
-    // if (req.query.sort) {
-    //   const sortBy = req.query.sort.split(",").join(" ");
-    //   query = query.sort(sortBy);
-    // } else {
-    //   query = query.sort("-createdAt");
-    // }
-
-    // 3) Field limiting
-    // if(req.query.fields){
-    //   const fields = req.query.fields.split(',').join(' ')
-    //   query = query.select(fields);
-    // } else {
-    //   query = query.select('-__v');
-    // }
-
-    // 4) Pagination
-
-    // const page = req.query.page * 1 || 1;
-    // const limit = req.query.limit * 1 || 100;
-
-    // const skip = (page - 1) * limit;
-
-
-    // query = query.skip(skip).limit(limit);
-
-    // if (req.query.page){
-    //   const numTours = await Tour.countDocuments();
-    //   if(skip >= numTours) throw new Error('This page does not exist')
-    // }
-
-    //EXECUTE QUERY
     const features = new APIFeatures(Tour.find(), req.query).filter().sort().limitFields().paginate();
     const tours = await features.query;
 
@@ -210,3 +113,45 @@ exports.deleteTour = async (req, res) => {
     });
   }
 };
+
+exports.getTourStats = async (req, res) => {
+  try {
+    const stats = await Tour.aggregate([
+      {
+        $match: { ratingsAverage: { $gte: 4.5 } }
+      },
+      {
+        $group: {
+          _id: { $toUpper: '$difficulty'},
+          numTours: { $sum: 1},
+          numRatings:  { $sum: '$ratingsQuantity'},
+          avgRating: { $avg: '$ratingsAverage' },
+          avgPrice: { $avg: '$price' },
+          minPrice: { $min: '$price' },
+          maxPrice: { $max: '$price' }
+        }
+      },
+      {
+        $sort: {
+          avgPrice: 1,
+        }
+      },
+      // {
+      //   $match: { _id: { $ne: 'EASY'}}
+      // }
+
+    ]);
+
+    res.status(200).json({
+      status: 'success',
+      data: {
+        stats
+      }
+    });
+  } catch (error) {
+    res.status(400).json({
+      status: "fail",
+      message: "Invalid data sent!",
+    });
+  }
+}
