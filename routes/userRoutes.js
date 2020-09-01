@@ -1,4 +1,5 @@
 const express = require("express");
+const authController = require('./../controllers/authController')
 
 const {
   getAllUsers,
@@ -8,7 +9,9 @@ const {
   deleteUser,
 } = require("./../controllers/userController");
 
+
 const router = express.Router();
+router.post('/signup', authController.signUp)
 
 router
   .route("/")
