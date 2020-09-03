@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-const User = require('./userModel')
+// const User = require("./userModel");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -51,7 +51,7 @@ const tourSchema = new mongoose.Schema(
           // not working on update and it points to NEW document creation
           return val < this.price; // 100 < 200 -- true / no validation error
         },
-        message: "Discount price ({VALUE}) should be below regular price"
+        message: "Discount price ({VALUE}) should be below regular price",
       },
     },
     summary: {
@@ -82,8 +82,8 @@ const tourSchema = new mongoose.Schema(
       // GeoJSON
       type: {
         type: String,
-        default: 'Point',
-        enum: ['Point']
+        default: "Point",
+        enum: ["Point"],
       },
       coordinates: [Number],
       address: String,
@@ -93,21 +93,26 @@ const tourSchema = new mongoose.Schema(
       {
         type: {
           type: String,
-          default: 'Point',
-          enum: ['Point']
+          default: "Point",
+          enum: ["Point"],
         },
         coordinates: [Number],
         address: String,
         description: String,
-        day: Number
+        day: Number,
+      },
+    ],
+    guides: [
+      { 
+        type: mongoose.Schema.ObjectId,
+        ref: 'User'
       }
     ],
-    guides: Array
   },
   {
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-  },
+  }
 );
 
 tourSchema.virtual("durationWeeks").get(function () {
@@ -120,13 +125,13 @@ tourSchema.pre("save", function (next) {
   next();
 });
 
-tourSchema.pre("save", async function(next){
-  const guidesPromises = this.guides.map(async id => await User.findById(id));
+// tourSchema.pre("save", async function(next){
+//   const guidesPromises = this.guides.map(async id => await User.findById(id));
 
-  this.guides = await Promise.all(guidesPromises)
+//   this.guides = await Promise.all(guidesPromises)
 
-  next();
-})
+//   next();
+// })
 
 // tourSchema.pre('save', function(next){
 //   console.log('Will save document..');
