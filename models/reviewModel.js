@@ -53,9 +53,11 @@ reviewSchema.pre(/^find/, function (next){
   next();
 })
 
-
-
-
 const Review = mongoose.model("Review", reviewSchema);
 
 module.exports = Review;
+
+// NESTED ROUTES
+//POST /tour/242423/reviews
+//GET /tour/242423/reviews/234242342
+
