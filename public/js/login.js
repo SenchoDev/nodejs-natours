@@ -26,6 +26,7 @@ export const login = async (email, password) => {
   }
 };
 
+
 export const logout = async () => {
   try {
     const res = await axios({
