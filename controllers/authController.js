@@ -112,6 +112,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // Grant access to protected data
   req.user = currentUser;
+  res.locals.user = currentUser;
   next();
 });
 
