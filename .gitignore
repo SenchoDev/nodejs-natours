@@ -1,2 +1,5 @@
 public/img
 node_modules
+.cache
+bundle.js.map
+bundle.js
