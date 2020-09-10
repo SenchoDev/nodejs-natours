@@ -1,4 +1,5 @@
 public/img
+config.env
 node_modules
 .cache
 bundle.js.map
