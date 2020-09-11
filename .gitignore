@@ -1,4 +1,4 @@
-public/img
+
 *.env
 node_modules
 .cache
