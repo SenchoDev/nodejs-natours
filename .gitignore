@@ -2,4 +2,5 @@ public/img
 *.env
 node_modules
 .cache
-
+bundle.js
+bundle.js.map
