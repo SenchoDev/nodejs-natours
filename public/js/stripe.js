@@ -9,6 +9,7 @@ export const bookTour = async tourId => {
     // console.log(session);
 
     // 2) Create checkout form + chanre credit card
+    console.log(stripe)
     await stripe.redirectToCheckout({
       sessionId: session.data.session.id
     });
